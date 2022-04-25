@@ -5,10 +5,17 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.urls import reverse
+
 from PIL import Image
 from io import BytesIO
 
 User = get_user_model()
+
+def get_product_url(obj, viewname):
+
+    ct_model = obj.__class__._meta.model_name
+    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': obj.slug})
 
 class MinResErrorExeption(Exception):
     pass
@@ -60,7 +67,11 @@ class Product(models.Model):
         image = self.image
         img = Image.open(image)
         new_img = img.convert('RGB')
-        resized_img_max = new_img.resize((200,200), Image.ANTIALIAS)
+
+        min_height, min_width = self.VALID_RES
+
+
+        resized_img_max = new_img.resize((800, 800), Image.ANTIALIAS)
         filestream = BytesIO()
         resized_img_max.save(filestream, 'JPEG', quality=90)
         filestream.seek(0)
@@ -69,11 +80,6 @@ class Product(models.Model):
         self.image = InMemoryUploadedFile(
             filestream, 'ImageFiled', name, 'jpeg/image', sys.getsizeof(filestream) ,None
         )
-
-        # min_height, min_width = self.VALID_RES
-        #
-        # if (img.height > min_height or img.width > min_width):
-        #     raise MinResErrorExeption('Разрешение ниже минимального')
 
         super().save(*args, *kwargs)
 
@@ -132,3 +138,6 @@ class AnyShoes(Product):
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')

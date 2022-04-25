@@ -12,13 +12,6 @@ class ShoesAdminForm(ModelForm):
             *Product.VALID_RES
         )
 
-    # def clean_image(self):
-    #     image = self.cleaned_data['image']
-    #     img = Image.open(image)
-    #     # min_height, min_width = Product.VALID_RES
-    #     #
-    #     # if (img.height < min_height or img.width < min_width):
-    #     #     raise ValidationError("Загружайте изображения минимум 400 на 400 пикселей")
 
 class ShoesAdmin(admin.ModelAdmin):
 
