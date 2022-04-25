@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{{ product.title }}
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col mb-4">
+        <div class="col mb-3">
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="img-fluid" height="500" width="500">
+        </div>
+    </div>
+    <div class="col mb-8">
+        <h3>{{ product.title }}</h3>
+        <p>Цена: {{ product.price }} РУБ.</p>
+        <p>Описание: {{ product.description }}</p>
+    </div>
+</div>
+
+{% endblock content %}
