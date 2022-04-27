@@ -1,16 +1,20 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, View
-from .models import AnyShoes, Category, LatestProducts
+from .models import AnyShoes, Category, LatestProducts, Season, Gender
 
 class BaseView(View):
 
     def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
+        categories = list(Category.objects.all())
         products = AnyShoes.objects.all()
-        print(products)
+        season = list(Season.objects.all())
+        gender = list(Gender.objects.all())
+        print(products[0])
         context = {
-            'ct': categories,
-            'products': products
+            'products': products,
+            'categories': categories,
+            'season': season,
+            'gender': gender,
         }
         return render(request, 'base.html', context)
 
