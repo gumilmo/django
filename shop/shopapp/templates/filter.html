@@ -1,47 +1,49 @@
 {% load static %}
-<div class="list-group">
+<form method="GET" action=".">
+    <div class="list-group">
 
-    <li class="list-group-item active" aria-current="true">Фильтр</li>
-    {% for ct in categories %}
-    <label class="list-group-item">
-        <input class="form-check-input me-1" type="checkbox" value="">
-        {{ct.name}}
-    </label>
-    {% endfor %}
+        <li class="list-group-item active" aria-current="true">Фильтр</li>
+        {% for ct in categories %}
+        <label class="list-group-item">
+            <input class="form-check-input me-1" name="category_chk" type="checkbox" value="Кроссовки">
+            {{ct.name}}
+        </label>
+        {% endfor %}
 
-    <li class="list-group-item active" aria-current="true">Пол</li>
-    {% for gen in gender %}
-    <label class="list-group-item">
-        <input class="form-check-input me-1" type="checkbox" value="">
-        {{gen.gender_name}}
-    </label>
-    {% endfor %}
+        <li class="list-group-item active" aria-current="true">Пол</li>
+        {% for gen in gender %}
+        <label class="list-group-item">
+            <input class="form-check-input me-1" name="gender_chk" type="checkbox" value="">
+            {{gen.gender_name}}
+        </label>
+        {% endfor %}
 
-    <li class="list-group-item active" aria-current="true">Сезон</li>
-    {% for season in season %}
-    <label class="list-group-item">
-        <input class="form-check-input me-1" type="checkbox" value="">
-        {{season.season_name}}
-    </label>
-    {% endfor %}
+        <li class="list-group-item active" aria-current="true">Сезон</li>
+        {% for season in season %}
+        <label class="list-group-item">
+            <input class="form-check-input me-1" name="season_chk" type="checkbox" value="">
+            {{season.season_name}}
+        </label>
+        {% endfor %}
 
 
-    <li class="list-group-item active" aria-current="true">Цена</li>
-    <li class="list-group-item"
-        style="display: flex; justify-content: space-between; align-items: center">
-        <div class="col-md-5 mb-3">
-            <input type="text" class="form-control" required>
-        </div>
-        <p> ДО </p>
-        <div class="col-md-5 mb-3">
-            <input type="text" class="form-control" required>
+        <li class="list-group-item active" aria-current="false">Цена</li>
+        <li class="list-group-item"
+            style="display: flex; justify-content: space-between; align-items: center">
+            <div class="col-md-5 mb-3">
+                <input type="text" class="form-control" name="min_price" placeholder="0">
+            </div>
+            <p> ДО </p>
+            <div class="col-md-5 mb-3">
+                <input type="text" class="form-control" name="max_price" placeholder="20000">
+            </div>
+        </li>
+    </div>
+    <li class="list-group-item" style="border: none">
+        <div class="filter_buttons"
+             style="display: flex; justify-content: center; align-items: center; flex-flow: nowrap">
+            <button type="submit" class="btn btn-success">Применить</button>
+            <button type="reset" class="btn btn-primary" style="margin-left: 20px">Сбросить</button>
         </div>
     </li>
-</div>
-<li class="list-group-item" style="border: none">
-    <div class="filter_buttons"
-         style="display: flex; justify-content: center; align-items: center; flex-flow: nowrap">
-<!--        <button type="button" class="btn btn-success">Применить</button>-->
-        <button type="button" class="btn btn-primary" style="margin-left: 0px">Сбросить</button>
-    </div>
-</li>
+</form>
