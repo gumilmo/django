@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
+<style>
+    header{
+        display: none;
+    }
+</style>
 <div class="row">
     <div class="col mb-4">
         <div class="col mb-3">
@@ -12,6 +15,12 @@
         <h3>{{ product.title }}</h3>
         <p>Цена: {{ product.price }} РУБ.</p>
         <p>Описание: {{ product.description }}</p>
+         <a class="btn btn-outline-success">
+            {{ product.gender }}
+        </a>
+        <a class="btn btn-outline-primary" >
+            {{ product.season }}
+        </a>
     </div>
 </div>
 

@@ -1,9 +1,21 @@
 from django.shortcuts import render
-from django.views.generic import DetailView
-from .models import AnyShoes
+from django.views.generic import DetailView, View
+from .models import AnyShoes, Category, LatestProducts
 
-def test_vies(request):
-    return render(request, 'base.html')
+class BaseView(View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        products = AnyShoes.objects.all()
+        print(products)
+        context = {
+            'ct': categories,
+            'products': products
+        }
+        return render(request, 'base.html', context)
+
+def filter_view(request):
+    return render(request, 'filter.html')
 
 class ProductDetailView(DetailView):
 

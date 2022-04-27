@@ -12,10 +12,13 @@ from io import BytesIO
 
 User = get_user_model()
 
+def get_model_for_count(*model_names):
+    return (models.Count(model_name) for model_name in model_names)
+
 def get_product_url(obj, viewname):
 
     ct_model = obj.__class__._meta.model_name
-    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': obj.slug})
+    return reverse(viewname, kwargs={'ct_model': 'store', 'slug': obj.slug})
 
 class MinResErrorExeption(Exception):
     pass
@@ -37,10 +40,30 @@ class LatestProducts():
 
     objects = LatestProductsManager()
 
+class CategoryManager(models.Manager):
+
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+    def get_categories_for_filter(self):
+        #qs = self.get_queryset().annotate(models.Count('anyshoes'))
+        #print(AnyShoes.objects.all().filter(gender=0))
+        # models = get_model_for_count('anyshoes')
+        # queryset = self.get_queryset().annotate(*models).values()
+        # #print([dict(name=c['name'], slug=c['slug'], count=c[self.CATEGORY_NAME_COUNT_NAME[c['name']]]) for c in queryset][1:])
+        # print(queryset.anyshoes__count)
+        # return queryset
+        #return qs
+        pass
+        #return [category_qs, gender_qs, season_qs]
+
 class Category(models.Model):
 
-    name = models.CharField(max_length=255, verbose_name='Category name')
+    name = models.CharField(max_length=255, verbose_name='Имя категории')
     slug = models.SlugField(unique=True)
+    objects = CategoryManager()
+
 
     def __str__(self):
         return self.name
@@ -53,12 +76,12 @@ class Product(models.Model):
     class Meta:
         abstract = True
 
-    category = models.ForeignKey(Category, verbose_name='Category', on_delete=models.CASCADE)
-    title = models.CharField(max_length=255, verbose_name='Product name')
+    category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, verbose_name='Название товара')
     slug = models.SlugField(unique=True)
     image = models.ImageField()
-    description = models.TextField(verbose_name='Description', null=True)
-    price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Price')
+    description = models.TextField(verbose_name='Описание', null=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Цена')
 
     def __str__(self):
         return self.title
@@ -85,32 +108,34 @@ class Product(models.Model):
 
 class CartProduct(models.Model):
 
-    user = models.ForeignKey('Customer', verbose_name='User', on_delete=models.CASCADE)
-    cart = models.ForeignKey('Cart', verbose_name='Cart', on_delete=models.CASCADE, related_name='related_products')
+    user = models.ForeignKey('Customer', verbose_name='Пользователь', on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', verbose_name='Cart', on_delete=models.CASCADE, related_name='related_product')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     qty = models.PositiveIntegerField(default=1)
-    total_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Total Price')
+    total_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Итого')
 
     def __str__(self):
-        return "Продукты: {} для корзины".format(self.product.title)
+        return "Продукты: {} для корзины".format(self.content_object.title)
 
 class Cart(models.Model):
 
-    owner = models.ForeignKey('Customer', verbose_name='Customer', on_delete=models.CASCADE)
+    owner = models.ForeignKey('Customer', verbose_name='Покупатель', on_delete=models.CASCADE)
     products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(default=0)
-    total_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Total Price')
+    total_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Итого')
+    in_order = models.BooleanField(default=False)
+    for_anonymous_user = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
 
 class Customer(models.Model):
 
-    user = models.ForeignKey(User, verbose_name='User', on_delete=models.CASCADE)
-    phone = models.CharField(max_length=20, verbose_name='Phone number')
-    adress = models.CharField(max_length=255, verbose_name='Adress')
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, verbose_name='Номер телефона')
+    adress = models.CharField(max_length=255, verbose_name='Адресс')
 
     def __str__(self):
         return "Покупатель: {} {}".format(self.user.first_name, self.user.last_name)
@@ -131,10 +156,18 @@ class Size(models.Model):
     def __str__(self):
         return self.size
 
+class Gender(models.Model):
+
+    gender_name = models.CharField(max_length=255, verbose_name="Пол")
+
+    def __str__(self):
+        return self.gender_name
+
 class AnyShoes(Product):
 
     season = models.ForeignKey(Season, verbose_name="Сезон", on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, verbose_name="Размер", on_delete=models.CASCADE)
+    size = models.CharField(max_length=4, blank=True, verbose_name='Размер')
+    gender = models.ForeignKey(Gender, verbose_name="Пол", on_delete=models.CASCADE)
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
