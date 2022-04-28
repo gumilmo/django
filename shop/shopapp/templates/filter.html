@@ -1,11 +1,11 @@
 {% load static %}
-<form method="GET" action=".">
+<form method="GET" action="." style="display: table-caption">
     <div class="list-group">
 
         <li class="list-group-item active" aria-current="true">Фильтр</li>
         {% for ct in categories %}
         <label class="list-group-item">
-            <input class="form-check-input me-1" name="category_chk" type="checkbox" value="Кроссовки">
+            <input class="form-check-input me-1" name="category_chk" type="checkbox" value="{{ct.name}}">
             {{ct.name}}
         </label>
         {% endfor %}
@@ -13,16 +13,16 @@
         <li class="list-group-item active" aria-current="true">Пол</li>
         {% for gen in gender %}
         <label class="list-group-item">
-            <input class="form-check-input me-1" name="gender_chk" type="checkbox" value="">
-            {{gen.gender_name}}
+            <input class="form-check-input me-1" name="gender_chk" type="checkbox" value="{{gen.name}}">
+            {{gen.name}}
         </label>
         {% endfor %}
 
         <li class="list-group-item active" aria-current="true">Сезон</li>
         {% for season in season %}
         <label class="list-group-item">
-            <input class="form-check-input me-1" name="season_chk" type="checkbox" value="">
-            {{season.season_name}}
+            <input class="form-check-input me-1" name="season_chk" type="checkbox" value="{{season.name}}">
+            {{season.name}}
         </label>
         {% endfor %}
 

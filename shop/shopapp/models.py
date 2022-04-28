@@ -143,10 +143,10 @@ class Customer(models.Model):
 
 class Season(models.Model):
 
-    season_name = models.CharField(max_length=255, verbose_name="Сезон года")
+    name = models.CharField(max_length=255, verbose_name="Сезон года")
 
     def __str__(self):
-        return self.season_name
+        return self.name
 
 
 class Size(models.Model):
@@ -158,10 +158,10 @@ class Size(models.Model):
 
 class Gender(models.Model):
 
-    gender_name = models.CharField(max_length=255, verbose_name="Пол")
+    name = models.CharField(max_length=255, verbose_name="Пол")
 
     def __str__(self):
-        return self.gender_name
+        return self.name
 
 class AnyShoes(Product):
 
