@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 {% include 'header.html' %}
-
+<style>
+    section{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
 <section class="py-5">
     <div class="content-zone" style="display: flex">
     <div class="filter">
@@ -15,7 +21,7 @@
             <div class="col mb-5" style="display: none">
             </div>
                 {% for product in products %}
-                <div class="col mb-5" style="display: inline-table; margin: 7px;">
+                <div class="col mb-5" style="display: inline-table; margin: 7px; width: 280px; height: 100px">
                     <div class="card h-100">
                         <!-- Product image-->
                         <img class="card-img-top" src="{{product.image.url}}" alt="..."/>

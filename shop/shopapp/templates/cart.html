@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    header{
+        display: none;
+    }
+    .list-group{
+        display: none;
+    }
+    .list-group-item{
+        display: none;
+    }
+    a{
+        margin: 3px;
+    }
+</style>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Название</th>
+      <th scope="col">Изображение</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Количество</th>
+      <th scope="col">Итого</th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for item in cart.products.all %}
+    <tr>
+      <th scope="row">{{item.content_object.title}}</th>
+      <td class="w-25"><img src="{{item.content_object.image.url}}" alt="" class="img-fluid"></td>
+      <td>{{item.content_object.price}}</td>
+      <td>{{item.qty}}</td>
+      <td>{{item.total_price}} РУБ</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock content %}
