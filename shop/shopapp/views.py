@@ -6,10 +6,12 @@ from django.contrib.contenttypes.models import ContentType
 from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct
 from .mixins import CartMixin
 from rest_framework.views import APIView
+from django.db import transaction
 from .serializers import *
 from rest_framework.generics import ListCreateAPIView
 from django.contrib import messages
-
+from .froms import OrderForm
+from .utils import *
 # from django_filters.rest_framework import DjangoFilterBackend
 # from django_filters import rest_framework as filters
 
@@ -152,7 +154,7 @@ class AddToCartView(CartMixin, View):
         )
         if created:
             self.cart.products.add(cart_product)
-        self.cart.save()
+        recalc_cart(self.cart)
         messages.add_message(request, messages.INFO, "Товар успешно добавлен")
         return HttpResponseRedirect('/cart/')
 
@@ -170,7 +172,7 @@ class DeleteFromCartView(CartMixin, View):
         )
         self.cart.products.remove(cart_product)
         cart_product.delete()
-        self.cart.save()
+        recalc_cart(self.cart)
         messages.add_message(request, messages.INFO, "Товар успешно удален")
         return HttpResponseRedirect('/cart/')
 
@@ -189,13 +191,47 @@ class ChangeQTYView(CartMixin, View):
         qty = int(request.POST.get('qty'))
         cart_product.qty = qty
         cart_product.save()
-        self.cart.save()
+        recalc_cart(self.cart)
         messages.add_message(request, messages.INFO, "Колличество товара изменено ")
         print(request.POST)
         return HttpResponseRedirect('/cart/')
 
+class ChekoutView(CartMixin, View):
 
+    def get(self, request, *args, **kwargs):
+        categories = list(Category.objects.all())
+        form = OrderForm(request.POST or None)
+        context = {
+            'cart': self.cart,
+            'ct': categories,
+            'form': form,
+        }
 
+        return render(request, 'chekout.html', context)
 
+class MakeOrderView(CartMixin, View):
 
-
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        customer = Customer.objects.get(user=request.user)
+        form = OrderForm(request.POST or None)
+        if form.is_valid():
+            new_order = form.save(commit=False)
+            new_order.customer = customer
+            new_order.fist_name = form.cleaned_data['fist_name']
+            new_order.last_name = form.cleaned_data['last_name']
+            new_order.phone = form.cleaned_data['phone']
+            new_order.address = form.cleaned_data['address']
+            new_order.buying_type = form.cleaned_data['buying_type']
+            new_order.order_date = form.cleaned_data['order_date']
+            new_order.comment = form.cleaned_data['comment']
+            new_order.save()
+            self.cart.in_order = True
+            self.cart.save()
+            new_order.cart = self.cart
+            new_order.save()
+            customer.order.add(new_order)
+            messages.add_message(request, messages.INFO, "Спасибо за заказ в нашем магазине, мы с вами свяжемся")
+            return HttpResponseRedirect('/chekout')
+        messages.add_message(request, messages.INFO, "К сожаления произошла ошибка, повторите заказ снова")
+        return HttpResponseRedirect('chekout/')

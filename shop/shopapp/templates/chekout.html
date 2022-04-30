@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 <style>
-    header{
+  header{
         display: none;
     }
     .list-group{
@@ -11,26 +11,17 @@
     .list-group-item{
         display: none;
     }
-    a{
-        margin: 3px;
-    }
-    th{
-      text-align: center;
-    }
-    td{
-      text-align: center;
-    }
 </style>
-<h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
 {% if messages %}
     {% for message in messages %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       {{message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <a href="{% url 'base' %}"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
     </div>
     {% endfor %}
 {% endif %}
 {% if cart.products.count %}
+<h3 class="text-center mt-5 mb-5">Просмотр заказа</h3>
 <table class="table">
   <thead>
     <tr>
@@ -50,17 +41,9 @@
       <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid"> </a></td>
       <td>{{item.content_object.size}}</td>
       <td>{{item.content_object.price}}</td>
-      <td>
-        <form action="{% url 'change-qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" method="post">
-          {% csrf_token %}
-          <input style="width: 80px; text-align: center;border: none; border-bottom: 2px solid black; outline: none" name="qty" type="number" min="1" value="{{ item.qty }}">
-          <input type="submit" class="btn btn-primary" value="Изменить кол-во">
-        </form>
-      </td>
+      <td style="text-align: center">{{ item.qty }}</td>
       <td>{{item.total_price}} РУБ</td>
-      <td>
-        <a href="{% url 'remove-from-cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" style="font-weight: bold; color: red; text-decoration: none">Удалить</a>
-      </td>
+      <td></td>
     </tr>
   {% endfor %}
     <tr>
@@ -71,6 +54,11 @@
     </tr>
   </tbody>
 </table>
- <div class="text-center"> <a class="btn btn-success" style="border-radius: 0px" href="{% url 'chekout' %}">ОФОРМИТЬ ЗАКАЗ</a> </div>
+<h3 class="text-center mt-5 mb-5">Форма заказа</h3>
+<form action="{% url 'make_order' %}" method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <input type="submit" class="btn btn-success" value="ОПЛАТИТЬ">
+</form>
 {% endif %}
 {% endblock content %}

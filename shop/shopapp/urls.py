@@ -7,7 +7,9 @@ from .views import (
     UserViewSet,
     AddToCartView,
     DeleteFromCartView,
-    ChangeQTYView
+    ChangeQTYView,
+    ChekoutView,
+    MakeOrderView
 )
 from rest_framework import routers
 
@@ -19,5 +21,7 @@ urlpatterns = [
     path('add-to-cart/<str:ct_model>/<str:slug>', AddToCartView.as_view(), name='add_to_cart'),
     path('remove-from-cart/<str:ct_model>/<str:slug>', DeleteFromCartView.as_view(), name='remove-from-cart'),
     path('change-qty/<str:ct_model>/<str:slug>', ChangeQTYView.as_view(), name='change-qty'),
+    path('chekout/', ChekoutView.as_view(), name='chekout'),
+    path('order/', MakeOrderView.as_view(), name='make_order'),
 ]
 
