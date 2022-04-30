@@ -4,10 +4,11 @@ from django.db.models import Avg, Max, Min
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct
-
+from .mixins import CartMixin
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.generics import ListCreateAPIView
+from django.contrib import messages
 
 # from django_filters.rest_framework import DjangoFilterBackend
 # from django_filters import rest_framework as filters
@@ -41,7 +42,7 @@ def filter(request):
 
     return products
 
-class BaseView(View):
+class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = list(Category.objects.all())
@@ -50,8 +51,6 @@ class BaseView(View):
         gender = list(Gender.objects.all())
         size = list(Size.objects.all())
         max_val = AnyShoes.objects.aggregate(Max('price'))
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer)
 
         #qs = filter(request)
         products = filter(request)
@@ -62,7 +61,7 @@ class BaseView(View):
             'season': season,
             'gender': gender,
             'size': size,
-            'cart': cart,
+            'cart': self.cart,
         }
 
         return render(request, 'base.html', context)
@@ -70,7 +69,7 @@ class BaseView(View):
 def filter_view(request):
     return render(request, 'filter.html')
 
-class ProductDetailView(DetailView):
+class ProductDetailView(CartMixin, DetailView):
 
     CT_MODEL_MODEL_CLASS = {
         'store': AnyShoes,
@@ -91,22 +90,21 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ct_model'] = self.model._meta.model_name
+        context['cart'] = self.cart
         return context
 
-class CartView(View):
+class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer)
         categories = list(Category.objects.all())
         context = {
-            'cart': cart,
+            'cart': self.cart,
             'ct': categories,
         }
 
         return render(request, 'cart.html', context)
 
-class UserViewSet(ListCreateAPIView):
+class UserViewSet(CartMixin, ListCreateAPIView):
 
     serializer_class = AnyShoesSerializer
     #filter_backends = (DjangoFilterBackend)
@@ -140,22 +138,60 @@ class UserViewSet(ListCreateAPIView):
 #         model = AnyShoes
 #         fields = ['title']
 
-class AddToCartView(View):
+class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         ct_model, product_slug = kwargs.get('ct_model'),kwargs.get('slug')
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer, in_order=False)
         content_type = ContentType.objects.get(model=ct_model)
         product = content_type.model_class().objects.get(slug=product_slug)
         cart_product, created = CartProduct.objects.get_or_create(
-            user = cart.owner,
-            cart=cart,
+            user = self.cart.owner,
+            cart=self.cart,
             content_type = content_type,
             object_id = product.id,
         )
         if created:
-            cart.products.add(cart_product)
+            self.cart.products.add(cart_product)
+        self.cart.save()
+        messages.add_message(request, messages.INFO, "Товар успешно добавлен")
+        return HttpResponseRedirect('/cart/')
+
+class DeleteFromCartView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'),kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user = self.cart.owner,
+            cart=self.cart,
+            content_type = content_type,
+            object_id = product.id,
+        )
+        self.cart.products.remove(cart_product)
+        cart_product.delete()
+        self.cart.save()
+        messages.add_message(request, messages.INFO, "Товар успешно удален")
+        return HttpResponseRedirect('/cart/')
+
+class ChangeQTYView(CartMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=self.cart.owner,
+            cart=self.cart,
+            content_type=content_type,
+            object_id=product.id,
+        )
+        qty = int(request.POST.get('qty'))
+        cart_product.qty = qty
+        cart_product.save()
+        self.cart.save()
+        messages.add_message(request, messages.INFO, "Колличество товара изменено ")
+        print(request.POST)
         return HttpResponseRedirect('/cart/')
 
 

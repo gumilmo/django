@@ -36,7 +36,11 @@
                         </div>
                         <!-- Product actions-->
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-success" style="border-radius: 0px" href="{{product.get_absolute_url}}">ПРОСМОТР</a></div>
+                            <div class="text-center"><a class="btn btn-success" style="border-radius: 0px" href="{{product.get_absolute_url}}">ПРОСМОТР</a>
+                            <a href="{% url 'add_to_cart' ct_model=product.get_model_name slug=product.slug%}" class="btn btn-success btn-outline-green" style="border-radius: 0px">
+                                <i class="bi-cart-fill me-1"></i>
+                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>

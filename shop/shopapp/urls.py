@@ -1,5 +1,14 @@
 from django.urls import path
-from .views import BaseView, ProductDetailView, filter_view, CartView, UserViewSet,AddToCartView
+from .views import (
+    BaseView,
+    ProductDetailView,
+    filter_view,
+    CartView,
+    UserViewSet,
+    AddToCartView,
+    DeleteFromCartView,
+    ChangeQTYView
+)
 from rest_framework import routers
 
 urlpatterns = [
@@ -8,5 +17,7 @@ urlpatterns = [
     path('cart/', CartView.as_view(), name='cart'),
     path('api/filter', UserViewSet.as_view(), name='filter'),
     path('add-to-cart/<str:ct_model>/<str:slug>', AddToCartView.as_view(), name='add_to_cart'),
+    path('remove-from-cart/<str:ct_model>/<str:slug>', DeleteFromCartView.as_view(), name='remove-from-cart'),
+    path('change-qty/<str:ct_model>/<str:slug>', ChangeQTYView.as_view(), name='change-qty'),
 ]
 
