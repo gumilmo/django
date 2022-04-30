@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, View
 from django.db.models import Avg, Max, Min
-from .models import AnyShoes, Category, Season, Gender, Customer, Cart
+from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
+from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct
 
 from rest_framework.views import APIView
 from .serializers import *
@@ -46,7 +48,10 @@ class BaseView(View):
         #products = AnyShoes.objects.all()
         season = list(Season.objects.all())
         gender = list(Gender.objects.all())
+        size = list(Size.objects.all())
         max_val = AnyShoes.objects.aggregate(Max('price'))
+        customer = Customer.objects.get(user=request.user)
+        cart = Cart.objects.get(owner=customer)
 
         #qs = filter(request)
         products = filter(request)
@@ -56,6 +61,8 @@ class BaseView(View):
             'categories': categories,
             'season': season,
             'gender': gender,
+            'size': size,
+            'cart': cart,
         }
 
         return render(request, 'base.html', context)
@@ -66,17 +73,25 @@ def filter_view(request):
 class ProductDetailView(DetailView):
 
     CT_MODEL_MODEL_CLASS = {
-        'store': AnyShoes
+        'store': AnyShoes,
     }
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request,*args, **kwargs):
         self.model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
         self.queryset = self.model._base_manager.all()
+        # self.context = {
+        #     'size': list(Size.objects.all()),
+        # }
         return super().dispatch(request, *args, **kwargs)
 
     context_object_name = 'product'
     template_name = 'product_detail.html'
     slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ct_model'] = self.model._meta.model_name
+        return context
 
 class CartView(View):
 
@@ -125,7 +140,23 @@ class UserViewSet(ListCreateAPIView):
 #         model = AnyShoes
 #         fields = ['title']
 
+class AddToCartView(View):
 
+    def get(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'),kwargs.get('slug')
+        customer = Customer.objects.get(user=request.user)
+        cart = Cart.objects.get(owner=customer, in_order=False)
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product, created = CartProduct.objects.get_or_create(
+            user = cart.owner,
+            cart=cart,
+            content_type = content_type,
+            object_id = product.id,
+        )
+        if created:
+            cart.products.add(cart_product)
+        return HttpResponseRedirect('/cart/')
 
 
 

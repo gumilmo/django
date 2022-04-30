@@ -13,13 +13,19 @@
     a{
         margin: 3px;
     }
+    th{
+      text-align: center;
+    }
+    td{
+      text-align: center;
+    }
 </style>
-
+<h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
 <table class="table">
   <thead>
     <tr>
       <th scope="col">Название</th>
-      <th scope="col">Изображение</th>
+      <th scope="col">Товар</th>
       <th scope="col">Цена</th>
       <th scope="col">Количество</th>
       <th scope="col">Итого</th>
@@ -29,7 +35,7 @@
    {% for item in cart.products.all %}
     <tr>
       <th scope="row">{{item.content_object.title}}</th>
-      <td class="w-25"><img src="{{item.content_object.image.url}}" alt="" class="img-fluid"></td>
+      <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid"> </a></td>
       <td>{{item.content_object.price}}</td>
       <td>{{item.qty}}</td>
       <td>{{item.total_price}} РУБ</td>

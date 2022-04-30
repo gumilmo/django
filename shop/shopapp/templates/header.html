@@ -29,7 +29,7 @@
             <form class="d-flex">
                 <a href="{% url 'cart' %}" class="btn btn-success btn-outline-green" type="submit" style="border-radius: 0px">
                     <i class="bi-cart-fill me-1"></i>
-                    <span class="badge bg-light ms-1 rounded-pill" style="color: green">0</span>
+                    <span class="badge bg-light ms-1 rounded-pill" style="color: green">{{cart.products.count}}</span>
                 </a>
             </form>
         </div>

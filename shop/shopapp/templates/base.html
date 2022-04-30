@@ -41,7 +41,11 @@
                     </div>
                 </div>
                 {% endfor %}
-
+                    <select class="form-control">
+                        {% for sz in size %}
+                        <option>{{sz.size}}</option>
+                        {% endfor %}
+                    </select>
             </div>
         </div>
     </div>

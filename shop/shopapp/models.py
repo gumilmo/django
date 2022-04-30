@@ -119,6 +119,10 @@ class CartProduct(models.Model):
     def __str__(self):
         return "Продукты: {} для корзины".format(self.content_object.title)
 
+    def save(self, *args, **kwargs):
+        self.total_price = self.qty * self.content_object.price
+        super().save(*args, **kwargs)
+
 class Cart(models.Model):
 
     owner = models.ForeignKey('Customer', verbose_name='Покупатель', on_delete=models.CASCADE)
@@ -166,8 +170,9 @@ class Gender(models.Model):
 class AnyShoes(Product):
 
     season = models.ForeignKey(Season, verbose_name="Сезон", on_delete=models.CASCADE)
-    size = models.CharField(max_length=4, blank=True, verbose_name='Размер')
+    #size = models.CharField(max_length=4, blank=True, verbose_name='Размер')
     gender = models.ForeignKey(Gender, verbose_name="Пол", on_delete=models.CASCADE)
+    size = models.ManyToManyField(Size, blank=True, related_name='related_size')
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
