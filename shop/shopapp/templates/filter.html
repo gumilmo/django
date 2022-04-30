@@ -1,36 +1,18 @@
 {% load static %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-
-<!--<script>-->
-<!--    app = angular.module('filter',[]);-->
-<!--    app.controller('filterController', function ($scope, $http){-->
-<!--        $http.get('api/filter').then(function (response) {-->
-<!--            $scope.products = response.data;-->
-<!--            console.log(response.data);-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
-
-function Counter() {
-  const [count, setCount] = useState(0);
-  return (
-    <>
-      <h1>{count}</h1>
-      <button onClick={() => setCount(count + 1)}>
-        Increment
-      </button>
-    </>
-  );
-}
-
-const root = createRoot(document.getElementById('root'));
-root.render(<App />);
+   $.ajax({
+  type: 'GET',
+    dataType:"json",
+  url: 'api/filter',
+  success: function (data, status, xhr) {
+    console.log('data: ', data);
+    //your logic
+  }
+});
 </script>
+
 <form  method="GET" action="." style="display: table-caption; margin: 20px;">
     <div class="list-group">
 
