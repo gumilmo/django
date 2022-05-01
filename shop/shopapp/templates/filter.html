@@ -17,6 +17,13 @@
      display: flex;
      flex-flow: column;
  }
+ .list-group-item.active{
+     background-color: #198754;
+     border: 1px solid #198754;
+ }
+ .list-group{
+     border-radius: 0px;
+ }
 </style>
 
 <form id="frm-filtr"  method="GET" action="." style="display: table-caption; margin: 20px;">
@@ -62,8 +69,8 @@
     <li class="list-group-item" style="border: none">
         <div class="filter_buttons"
              style="display: flex; justify-content: center; align-items: center; flex-flow: column">
-            <button type="submit" class="btn btn-success">Применить</button>
-            <a href="{% url 'base' %}" type="reset" class="btn btn-primary" style="margin-top: 10px">Сбросить</a>
+            <button type="submit" class="btn btn-success" style="border-radius: 0px">Применить</button>
+            <a href="{% url 'base' %}" type="reset" class="btn btn-primary" style="margin-top: 10px; border-radius: 0px">Сбросить</a>
         </div>
     </li>
 </form>

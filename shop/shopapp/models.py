@@ -174,7 +174,8 @@ class Gender(models.Model):
 class Action(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Имя акции")
-    discription = models.TextField(verbose_name="Описание акции")
+    discription = models.CharField(max_length=400, verbose_name="Описание акции")
+    image = models.ImageField(verbose_name="Изображение", blank=True)
 
     def __str__(self):
         return self.name

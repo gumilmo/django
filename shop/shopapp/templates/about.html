@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    h3{
+        display: none;
+    }
+     header{
+        display: none;
+    }
+    .list-group{
+        display: none;
+    }
+    .list-group-item{
+        display: none;
+    }
+    .content-zone{
+        height: 700px;
+    }
+    footer{
+        height: 10vw;
+    }
+    .map{
+        height: 500px;
+        width: 500px;
+    }
+    .products{
+            display: flex;
+    align-items: center;
+    }
+    @media screen and (max-width: 703px) {
+        .content-zone{
+        height: 900px;
+            padding: 0;
+        }
+        .navbar{
+            height: 180px;
+            z-index: 100;
+        }
+        footer{
+        height: 230px;
+        }
+        .map{
+            height: 300px;
+            width: 300px;
+        }
+        .content-about{
+            flex-flow: column;
+        }
+        }
+</style>
+
+<div class="content-about" style="display: flex">
+    <div class="map">
+        <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Acd0146b7d355b01574e9967132432ea2d206a81aca7cb88556b35a1135a41a24&amp;width=100%&amp;height=100%&amp;lang=ru_RU&amp;scroll=true"></script>
+    </div>
+    <div class="info">
+        <div class="jumbotron " style="margin-top: 30px">
+          <div class="container">
+            <h1 class="display-4">Ищите наш магазин и пункт выдачи</h1>
+                <h1 class="display-5">ул. Ленина, д.45</h1>
+                <a href="tel:7-999-123-45-67" class="lead btn btn-success" style="border-radius: 0px; margin-top: 20px">ТЕЛ + 7-999-123-45-67</a>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

@@ -3,7 +3,7 @@ from django.views.generic import DetailView, View
 from django.db.models import Avg, Max, Min
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
-from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct
+from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct, Action
 from .mixins import CartMixin
 from rest_framework.views import APIView
 from django.db import transaction
@@ -29,6 +29,7 @@ def filter(request):
     season_chk_query = request.GET.get('season_chk')
     min_price_query = request.GET.get('min_price')
     max_price_query = request.GET.get('max_price')
+    action_query = request.GET.get('action')
 
     if is_valid_queryparam(category_chk_query):
         products = products.filter(category__name__icontains=category_chk_query)
@@ -42,6 +43,9 @@ def filter(request):
     if is_valid_queryparam(max_price_query):
         products = products.filter(price__lte=max_price_query)
 
+    if is_valid_queryparam(action_query):
+        products = products.filter(action__name__icontains=action_query)
+
     return products
 
 class BaseView(CartMixin, View):
@@ -52,6 +56,7 @@ class BaseView(CartMixin, View):
         season = list(Season.objects.all())
         gender = list(Gender.objects.all())
         size = list(Size.objects.all())
+        actions = list(Action.objects.all())
         max_val = AnyShoes.objects.aggregate(Max('price'))
 
         #qs = filter(request)
@@ -64,12 +69,18 @@ class BaseView(CartMixin, View):
             'gender': gender,
             'size': size,
             'cart': self.cart,
+            'actions': actions
         }
 
         return render(request, 'base.html', context)
 
 def filter_view(request):
     return render(request, 'filter.html')
+
+class AboutView(View):
+
+    def get(self, request):
+        return render(request, 'about.html')
 
 class ProductDetailView(CartMixin, DetailView):
 

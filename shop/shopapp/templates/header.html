@@ -10,6 +10,7 @@
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet"/>
 
@@ -28,7 +29,8 @@
             width: 200px;
         }
         }
-
+        .py-5{
+            padding: 0px!important;
         }
     </style>
 
@@ -44,7 +46,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'base' %}">Магазин</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">О нас</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">О нас</a></li>
             </ul>
             <form class="d-flex">
                 <a href="{% url 'cart' %}" class="btn btn-success btn-outline-green" type="submit" style="border-radius: 0px">
@@ -59,12 +61,34 @@
     </div>
 </nav>
 <!-- Header-->
-<header class="bg-dark py-5">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Shop in style</h1>
-            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+<header class="bg-dark py-5" style="padding: 0">
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="height: 300px;">
+  <div class="carousel-inner" style="justify-content: center; align-items: center">
+        {% for act in actions %}
+    <!-- item -->
+        <div class="carousel-item text-center text-light mb-5 {% if forloop.first %} active{% endif %}" style="background-color: #1a1818; height: 300px;
+        background: url({{act.image.url}}) no-repeat center center; background-size: cover;">
+            <div class="slide-content-info" style="margin-top: 110px">
+                <h2>{{act.name}}</h2>
+                <p class="px-3">{{ act.discription }}</p>
+                <form action="" method="get">
+                    <input name="action" value="{{act.name}}" style="display: none">
+                    <button type="submit" class="btn btn-success" style="border-radius: 0px">Применить</button>
+                </form>
+<!--                <a class="btn btn-success" style="border-radius: 0px" href="{{product.get_absolute_url}}">ПОДРОБНЕЕ</a>-->
+            </div>
         </div>
-    </div>
+    <!-- end item -->
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
 </header>
 <!-- Section-->

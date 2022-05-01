@@ -9,7 +9,8 @@ from .views import (
     DeleteFromCartView,
     ChangeQTYView,
     ChekoutView,
-    MakeOrderView
+    MakeOrderView,
+    AboutView,
 )
 from rest_framework import routers
 
@@ -23,5 +24,6 @@ urlpatterns = [
     path('change-qty/<str:ct_model>/<str:slug>', ChangeQTYView.as_view(), name='change-qty'),
     path('chekout/', ChekoutView.as_view(), name='chekout'),
     path('order/', MakeOrderView.as_view(), name='make_order'),
+    path('about/',AboutView.as_view(), name='about'),
 ]
 

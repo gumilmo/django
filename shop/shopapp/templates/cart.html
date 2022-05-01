@@ -23,6 +23,12 @@
     #not-found{
       display: none;
     }
+    footer{
+      margin-top: 250px;
+    }
+    .content-zone{
+      min-height: 700px;
+    }
 </style>
 <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
 {% if messages %}
@@ -62,7 +68,7 @@
       </td>
       <td>{{item.total_price}} РУБ</td>
       <td>
-        <a href="{% url 'remove-from-cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" style="font-weight: bold; color: red; text-decoration: none">Удалить</a>
+        <a href="{% url 'remove-from-cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" style="font-weight: bold; color: #c02525; text-decoration: none">Удалить</a>
       </td>
     </tr>
   {% endfor %}
