@@ -4,14 +4,15 @@ from django.db.models import Avg, Max, Min
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct, Action
-from .mixins import CartMixin
+from .mixins import *
 from rest_framework.views import APIView
 from django.db import transaction
 from .serializers import *
 from rest_framework.generics import ListCreateAPIView
 from django.contrib import messages
-from .froms import OrderForm
+from .froms import OrderForm, ProductForm
 from .utils import *
+from django.views.generic.edit import FormMixin
 # from django_filters.rest_framework import DjangoFilterBackend
 # from django_filters import rest_framework as filters
 
@@ -82,37 +83,43 @@ class AboutView(View):
     def get(self, request):
         return render(request, 'about.html')
 
-class ProductDetailView(CartMixin, DetailView):
+class ProductDetailView(CartMixin, FormMixin, DetailView):
 
     CT_MODEL_MODEL_CLASS = {
         'store': AnyShoes,
     }
+    context_object_name = 'product'
+    template_name = 'product_detail.html'
+    slug_url_kwarg = 'slug'
+    form_class = ProductForm
 
     def dispatch(self, request,*args, **kwargs):
         self.model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
         self.queryset = self.model._base_manager.all()
-        # self.context = {
-        #     'size': list(Size.objects.all()),
-        # }
         return super().dispatch(request, *args, **kwargs)
 
-    context_object_name = 'product'
-    template_name = 'product_detail.html'
-    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ct_model'] = self.model._meta.model_name
         context['cart'] = self.cart
+        context['form'] = ProductForm(initial={'post': self.object})
+        print(self.get_form(),'+++')
         return context
+
+    def form_valid(self, form):
+        form.save()
+        return super(AnyShoes, self).form_valid(form)
 
 class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = list(Category.objects.all())
+        form = ProductForm(request.POST or None)
         context = {
             'cart': self.cart,
             'ct': categories,
+            'form': form,
         }
 
         return render(request, 'cart.html', context)
@@ -204,8 +211,20 @@ class ChangeQTYView(CartMixin, View):
         cart_product.save()
         recalc_cart(self.cart)
         messages.add_message(request, messages.INFO, "Колличество товара изменено ")
-        print(request.POST)
         return HttpResponseRedirect('/cart/')
+
+class ChangeSizeView(CartMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        product = AnyShoes.objects.get(slug=product_slug)
+        form = ProductForm(request.POST or None)
+        if form.is_valid():
+            product.size = form.cleaned_data['size']
+        print(product.size, product.title)
+        messages.add_message(request, messages.INFO, "Размер выбран")
+        return HttpResponseRedirect('/cart/')
+
 
 class ChekoutView(CartMixin, View):
 
@@ -243,7 +262,8 @@ class MakeOrderView(CartMixin, View):
             new_order.cart = self.cart
             new_order.save()
             customer.order.add(new_order)
-            messages.add_message(request, messages.INFO, "Спасибо за заказ в нашем магазине, мы с вами свяжемся")
+            messages.add_message(request, messages.INFO, "Спасибо за заказ! На вашу почту будет отправлено письмо с переходом на форму оплаты.")
             return HttpResponseRedirect('/chekout')
         messages.add_message(request, messages.INFO, "К сожаления произошла ошибка, повторите заказ снова")
         return HttpResponseRedirect('chekout/')
+

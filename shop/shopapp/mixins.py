@@ -1,6 +1,8 @@
-from django.views.generic import View
+from django.shortcuts import render
+from django.views.generic import View, FormView
 
 from .models import Cart, Customer
+from .froms import ProductForm
 
 class CartMixin(View):
 
@@ -23,4 +25,14 @@ class CartMixin(View):
         self.cart = cart
 
         return super().dispatch(request, *args, **kwargs)
+
+class FormSizeMixin(View):
+
+    def get(self, request, *args, **kwargs):
+        form = ProductForm(request.POST or None)
+        context = {
+            'form': form
+        }
+        self.form = form
+        return render(request,context)
 

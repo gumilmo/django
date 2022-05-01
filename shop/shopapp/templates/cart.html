@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 <style>
     header{
@@ -29,6 +30,12 @@
     .content-zone{
       min-height: 700px;
     }
+    label{
+      display: none;
+    }
+    .size-input{
+      text-align: center;
+    }
 </style>
 <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
 {% if messages %}
@@ -57,13 +64,19 @@
     <tr>
       <th scope="row">{{item.content_object.title}}</th>
       <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid"> </a></td>
-      <td>{{item.content_object.size}}</td>
+      <td>
+        <form method="post" action="{% url 'change-size' ct_model=item.content_object slug=item.content_object.slug%}">
+          {% csrf_token %}
+          {{ form | crispy}}
+          <input type="submit" class="btn btn-success" style="border-radius: 0px; margin-top: 16px" value="✓">
+        </form>
+      </td>
       <td>{{item.content_object.price}}</td>
       <td>
-        <form action="{% url 'change-qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" method="post">
+        <form style="display: flex; flex-flow: column; justify-content: center; align-items: center" action="{% url 'change-qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" method="post">
           {% csrf_token %}
-          <input style="width: 80px; text-align: center;border: none; border-bottom: 2px solid black; outline: none" name="qty" type="number" min="1" value="{{ item.qty }}">
-          <input type="submit" class="btn btn-primary" value="Изменить кол-во">
+          <input style="width: 40px; text-align: center;border: none; border-bottom: 2px solid black; outline: none" name="qty" type="number" min="1" value="{{ item.qty }}">
+          <input type="submit" class="btn btn-success" style="border-radius: 0px; margin-top: 25px" value="✓">
         </form>
       </td>
       <td>{{item.total_price}} РУБ</td>

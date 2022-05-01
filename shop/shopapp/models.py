@@ -182,8 +182,18 @@ class Action(models.Model):
 
 class AnyShoes(Product):
 
+    SIZE_CHOICES = [
+        ('XS', '38'),
+        ('S', '39'),
+        ('M', '41'),
+        ('M2', '42'),
+        ('L', '44'),
+        ('XL', '45'),
+        ('XXL', 46)
+    ]
+
     season = models.ForeignKey(Season, verbose_name="Сезон", on_delete=models.CASCADE)
-    size = models.CharField(max_length=4, blank=True, verbose_name='Размер')
+    size = models.CharField(max_length=4, blank=True, verbose_name='Размер',choices=SIZE_CHOICES)
     gender = models.ForeignKey(Gender, verbose_name="Пол", on_delete=models.CASCADE)
     action = models.ForeignKey(Action, verbose_name="Акция товара", on_delete=models.CASCADE, null=True, blank=True)
     #size = models.ManyToManyField(Size, blank=True, related_name='related_size')

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 <style>
     header{
         display: none;
@@ -19,6 +20,9 @@
     footer{
         margin-top: 170px;
     }
+    .select{
+        size: 200px;
+    }
 </style>
 <div class="row">
     <div class="col mb-4">
@@ -30,15 +34,26 @@
         <h3>{{ product.title }}</h3>
         <p>Цена: {{ product.price }} РУБ.</p>
         <p>Описание: {{ product.description }}</p>
-         <a class="btn btn-outline-success">
-            {{ product.gender }}
-        </a>
-        <a class="btn btn-outline-primary" >
-            {{ product.season }}
-        </a>
-        <a class="btn btn-outline-secondary">
-            {{ product.category }}
-        </a>
+        <div class="tags" style="max-width: 270px">
+             <a class="btn btn-outline-success">
+                {{ product.gender }}
+            </a>
+            <a class="btn btn-outline-primary" >
+                {{ product.season }}
+            </a>
+            <a class="btn btn-outline-secondary">
+                {{ product.category }}
+            </a>
+            {% if product.action %}
+            <a class="btn btn-danger">
+                {{ product.action }}
+            </a>
+            {% endif %}
+            <form action="" method="post">
+
+            {{ form|crispy}}
+            </form>
+        </div>
         <br>
         <a class="btn btn-success" style="border-radius: 0px" href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug%}">ДОБАВИТЬ В КОРЗИНУ</a>
     </div>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order
+from .models import Order, AnyShoes
 
 class OrderForm(forms.ModelForm):
 
@@ -21,4 +21,15 @@ class OrderForm(forms.ModelForm):
             'buying_type',
             'order_date',
             'comment'
+        )
+
+class ProductForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['size'].widget.attrs['class'] = 'size-input'
+
+    class Meta:
+        model = AnyShoes
+        fields = (
+            'size',
         )
