@@ -11,6 +11,26 @@
     .list-group-item{
         display: none;
     }
+    .form-group{
+      width: 400px;
+      margin-left: 100px;
+      margin-top: 10px;
+    }
+    .form-control{
+      border-radius: 0px;
+      border: none;
+      border-bottom: 2px solid #cbc9c9;
+      outline: none;
+    }
+    .asteriskField{
+      color: orange;
+    }
+    .textinput{
+      padding: 10px;
+    }
+    #not-found{
+      display: none;
+    }
 </style>
 {% if messages %}
     {% for message in messages %}
@@ -38,7 +58,7 @@
    {% for item in cart.products.all %}
     <tr>
       <th scope="row">{{item.content_object.title}}</th>
-      <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid"> </a></td>
+      <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid" width="40px" height="40px"> </a></td>
       <td>{{item.content_object.size}}</td>
       <td>{{item.content_object.price}}</td>
       <td style="text-align: center">{{ item.qty }}</td>
@@ -58,7 +78,7 @@
 <form action="{% url 'make_order' %}" method="post">
   {% csrf_token %}
   {{ form|crispy }}
-  <input type="submit" class="btn btn-success" value="ОПЛАТИТЬ">
+  <div class="text-center"> <input class="btn btn-success btn-outline-green" style="border-radius: 0px; margin-top: 30px; font-size: 24px; padding: 10px" type="submit" value="ОПЛАТИТЬ"> </div>
 </form>
 {% endif %}
 {% endblock content %}

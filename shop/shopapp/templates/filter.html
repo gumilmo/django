@@ -12,8 +12,14 @@
   }
 });
 </script>
+<style>
+ .filter_buttons{
+     display: flex;
+     flex-flow: column;
+ }
+</style>
 
-<form  method="GET" action="." style="display: table-caption; margin: 20px;">
+<form id="frm-filtr"  method="GET" action="." style="display: table-caption; margin: 20px;">
     <div class="list-group">
 
         <li class="list-group-item active" aria-current="true">Фильтр</li>
@@ -55,9 +61,9 @@
     </div>
     <li class="list-group-item" style="border: none">
         <div class="filter_buttons"
-             style="display: flex; justify-content: center; align-items: center; flex-flow: nowrap">
+             style="display: flex; justify-content: center; align-items: center; flex-flow: column">
             <button type="submit" class="btn btn-success">Применить</button>
-            <a href="{% url 'base' %}" type="reset" class="btn btn-primary" style="margin-left: 20px">Сбросить</a>
+            <a href="{% url 'base' %}" type="reset" class="btn btn-primary" style="margin-top: 10px">Сбросить</a>
         </div>
     </li>
 </form>

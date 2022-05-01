@@ -7,17 +7,22 @@
         align-items: center;
         justify-content: center;
     }
+    @media screen and (max-width: 582px) {
+      .filter-main {
+          display: none;
+      }
+    }
 </style>
 <section class="py-5">
     <div class="content-zone" style="display: flex">
-    <div class="filter">
+    <div class="filter-main">
         {% include 'filter.html' %}
     </div>
     <div class="products">
         <div class="container px-4 px-lg-5 mt-5">
+            <h3 id="not-found" class="text-center mt-5 mb-5">{% if not products.count %}К сожалению, ничего не нашлось{% endif %}</h3>
         {% block content %}
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-
             <div class="col mb-5" style="display: none">
             </div>
                 {% for product in products %}
@@ -45,11 +50,6 @@
                     </div>
                 </div>
                 {% endfor %}
-                    <select class="form-control">
-                        {% for sz in size %}
-                        <option>{{sz.size}}</option>
-                        {% endfor %}
-                    </select>
             </div>
         </div>
     </div>

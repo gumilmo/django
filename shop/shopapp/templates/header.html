@@ -13,6 +13,25 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet"/>
 
+    <style>
+        @media screen and (min-width: 583px) {
+        .filter-menu {
+            display: none;
+            }
+        .list-group{
+            width: 200px;
+            margin: 0px;
+        }
+        }
+        @media  screen and (max-width: 583px){
+        .filter-menu.list-group{
+            width: 200px;
+        }
+        }
+
+        }
+    </style>
+
 </head>
 <body>
 <!-- Navigation-->
@@ -33,6 +52,9 @@
                     <span class="badge bg-light ms-1 rounded-pill" style="color: green">{{cart.products.count}}</span>
                 </a>
             </form>
+            <div class="filter-menu" style="margin-left: -27px;">
+                {% include 'filter.html' %}
+            </div>
         </div>
     </div>
 </nav>

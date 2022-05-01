@@ -171,11 +171,20 @@ class Gender(models.Model):
     def __str__(self):
         return self.name
 
+class Action(models.Model):
+
+    name = models.CharField(max_length=255, verbose_name="Имя акции")
+    discription = models.TextField(verbose_name="Описание акции")
+
+    def __str__(self):
+        return self.name
+
 class AnyShoes(Product):
 
     season = models.ForeignKey(Season, verbose_name="Сезон", on_delete=models.CASCADE)
     size = models.CharField(max_length=4, blank=True, verbose_name='Размер')
     gender = models.ForeignKey(Gender, verbose_name="Пол", on_delete=models.CASCADE)
+    action = models.ForeignKey(Action, verbose_name="Акция товара", on_delete=models.CASCADE, null=True, blank=True)
     #size = models.ManyToManyField(Size, blank=True, related_name='related_size')
 
     def __str__(self):
@@ -219,6 +228,7 @@ class Order(models.Model):
     phone = models.CharField(max_length=10, verbose_name="Номер телефона")
     cart = models.ForeignKey(Cart, verbose_name='Корзина товаров', on_delete=models.CASCADE, null=True, blank=True)
     address = models.CharField(max_length=1024, verbose_name="Адресс", null=True, blank=True)
+    email = models.EmailField(null=True,blank=True)
     status = models.CharField(
         max_length=100,
         verbose_name="Статус заказа",
