@@ -64,6 +64,7 @@
     <tr>
       <th scope="row">{{item.content_object.title}}</th>
       <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid"> </a></td>
+      <a>{{item.content_object.size.get_size_display}}</a>
       <td>
         <form method="post" action="{% url 'change-size' ct_model=item.content_object slug=item.content_object.slug%}">
           {% csrf_token %}

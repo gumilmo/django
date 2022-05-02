@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 from django.utils import timezone
+from galleryfield.fields import GalleryField
 
 from PIL import Image
 from io import BytesIO
@@ -87,23 +88,28 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        image = self.image
-        img = Image.open(image)
+    def resizing(imgs):
+        imgs = imgs
+        img = Image.open(imgs)
         new_img = img.convert('RGB')
-
-        min_height, min_width = self.VALID_RES
-
 
         resized_img_max = new_img.resize((800, 800), Image.ANTIALIAS)
         filestream = BytesIO()
         resized_img_max.save(filestream, 'JPEG', quality=90)
         filestream.seek(0)
-        name = '{}.{}'.format(*self.image.name.split('.'))
-        print(image.name, name, resized_img_max.width, resized_img_max.height)
-        self.image = InMemoryUploadedFile(
+        name = '{}.{}'.format(*imgs.name.split('.'))
+        print(imgs.name, name, resized_img_max.width, resized_img_max.height)
+        imgs = InMemoryUploadedFile(
             filestream, 'ImageFiled', name, 'jpeg/image', sys.getsizeof(filestream) ,None
         )
+
+    def save(self, *args, **kwargs):
+        IMAGES = [
+            self.image,
+        ]
+
+        for img in IMAGES:
+            self.resizing(img)
 
         super().save(*args, *kwargs)
 

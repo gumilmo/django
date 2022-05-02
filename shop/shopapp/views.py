@@ -15,7 +15,7 @@ from .utils import *
 from django.views.generic.edit import FormMixin
 # from django_filters.rest_framework import DjangoFilterBackend
 # from django_filters import rest_framework as filters
-
+from django.core.paginator import Paginator
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 
@@ -63,14 +63,22 @@ class BaseView(CartMixin, View):
         #qs = filter(request)
         products = filter(request)
 
+        prodcuts_paginator = Paginator(products,6)
+        page_num = request.GET.get('page')
+        page = prodcuts_paginator.get_page(page_num)
+        #page = prodcuts_paginator.get_elided_page_range(page)
+        num_pages = "a"*page.paginator.num_pages
+
         context = {
-            'products': products,
+            'products': page,
             'categories': categories,
             'season': season,
             'gender': gender,
             'size': size,
             'cart': self.cart,
-            'actions': actions
+            'actions': actions,
+            'page': page,
+            'num_pages': num_pages,
         }
 
         return render(request, 'base.html', context)
@@ -230,6 +238,7 @@ class ChekoutView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = list(Category.objects.all())
+
         form = OrderForm(request.POST or None)
         context = {
             'cart': self.cart,

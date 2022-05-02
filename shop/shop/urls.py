@@ -20,8 +20,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('shopapp.urls'))
+    path('', include('shopapp.urls')),
 ]
+
+urlpatterns += [path(r"images-handler/", include("galleryfield.urls"))]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

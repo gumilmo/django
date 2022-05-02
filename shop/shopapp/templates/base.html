@@ -22,9 +22,13 @@
         justify-content: center;
         align-items: center;
         height: 200px;
+        margin-top: 40px;
     }
     .content-zone{
         margin-top: 50px;
+    }
+    .pagination{
+        justify-content: center!important;
     }
 </style>
 <section class="py-5">
@@ -34,9 +38,9 @@
     </div>
     <div class="products">
         <div class="container px-4 px-lg-5 mt-5">
-            <h3 id="not-found" class="text-center mt-5 mb-5">{% if not products.count %}К сожалению, ничего не нашлось{% else %}Наши товары{% endif %}</h3>
+            <h3 id="not-found" class="text-center mt-5 mb-5">{% if not products %}К сожалению, ничего не нашлось{% else %}Наши товары{% endif %}</h3>
         {% block content %}
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-5" style="display: none">
             </div>
                 {% for product in products %}
@@ -65,6 +69,25 @@
                 </div>
                 {% endfor %}
             </div>
+            <nav class="text-center" aria-label="Page navigation example">
+              <ul class="pagination">
+                <li class="page-item">
+                    {% if page.has_previous %}
+                  <a class="page-link" href="{% url 'base' %}?page={{ page.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                    {% endif %}
+                </li>
+                <li class="page-item"><a class="page-link" href="{%url 'base'%}?page={{forloop.counter}}">{{page.number}}</a></li>
+                <li class="page-item">
+                    {% if page.has_next %}
+                  <a class="page-link" href="{% url 'base' %}?page={{ page.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                    {% endif %}
+                </li>
+              </ul>
+            </nav>
         </div>
     </div>
     </div>
