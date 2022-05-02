@@ -91,21 +91,48 @@ class Product(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        image = self.image
-        img = Image.open(image)
-        new_img = img.convert('RGB')
+        image1 = self.image
+        image2 = self.image2
+        image3 = self.image3
+
+        img1 = Image.open(image1)
+        img2 = Image.open(image2)
+        img3 = Image.open(image3)
+
+        new_img1 = img1.convert('RGB')
+        new_img2 = img2.convert('RGB')
+        new_img3 = img3.convert('RGB')
 
         min_height, min_width = self.VALID_RES
 
+        resized_img_max1 = new_img1.resize((800, 800), Image.ANTIALIAS)
+        resized_img_max2 = new_img2.resize((800, 800), Image.ANTIALIAS)
+        resized_img_max3 = new_img3.resize((800, 800), Image.ANTIALIAS)
 
-        resized_img_max = new_img.resize((800, 800), Image.ANTIALIAS)
-        filestream = BytesIO()
-        resized_img_max.save(filestream, 'JPEG', quality=90)
-        filestream.seek(0)
-        name = '{}.{}'.format(*self.image.name.split('.'))
-        print(image.name, name, resized_img_max.width, resized_img_max.height)
+        filestream1 = BytesIO()
+        filestream2 = BytesIO()
+        filestream3 = BytesIO()
+
+        resized_img_max1.save(filestream1, 'JPEG', quality=90)
+        resized_img_max2.save(filestream2, 'JPEG', quality=90)
+        resized_img_max3.save(filestream3, 'JPEG', quality=90)
+
+        filestream1.seek(0)
+        filestream2.seek(0)
+        filestream3.seek(0)
+
+        name1 = '{}.{}'.format(*self.image.name.split('.'))
+        name2 = '{}.{}'.format(*self.image2.name.split('.'))
+        name3 = '{}.{}'.format(*self.image3.name.split('.'))
+
         self.image = InMemoryUploadedFile(
-            filestream, 'ImageFiled', name, 'jpeg/image', sys.getsizeof(filestream) ,None
+            filestream1, 'ImageFiled', name1, 'jpeg/image', sys.getsizeof(filestream1) ,None
+        )
+        self.image2 = InMemoryUploadedFile(
+            filestream2, 'ImageFiled', name2, 'jpeg/image', sys.getsizeof(filestream2) ,None
+        )
+        self.image3 = InMemoryUploadedFile(
+            filestream3, 'ImageFiled', name3, 'jpeg/image', sys.getsizeof(filestream3) ,None
         )
 
         super().save(*args, *kwargs)

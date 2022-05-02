@@ -47,7 +47,7 @@
                 <div class="col mb-5" style="display: inline-table; margin: 7px; width: 280px; height: 100px">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="{{product.image.url}}" alt="..."/>
+                        <img class="card-img-top" src="{{product.image.url}}" height="200px" alt="..."/>
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
@@ -69,6 +69,7 @@
                 </div>
                 {% endfor %}
             </div>
+            {% if products %}
             <nav class="text-center" aria-label="Page navigation example">
               <ul class="pagination">
                 <li class="page-item">
@@ -88,6 +89,7 @@
                 </li>
               </ul>
             </nav>
+            {% endif %}
         </div>
     </div>
     </div>
