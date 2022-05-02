@@ -82,34 +82,31 @@ class Product(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название товара')
     slug = models.SlugField(unique=True)
     image = models.ImageField()
+    image2 = models.ImageField()
+    image3 = models.ImageField()
     description = models.TextField(verbose_name='Описание', null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Цена')
 
     def __str__(self):
         return self.title
 
-    def resizing(imgs):
-        imgs = imgs
-        img = Image.open(imgs)
+    def save(self, *args, **kwargs):
+        image = self.image
+        img = Image.open(image)
         new_img = img.convert('RGB')
+
+        min_height, min_width = self.VALID_RES
+
 
         resized_img_max = new_img.resize((800, 800), Image.ANTIALIAS)
         filestream = BytesIO()
         resized_img_max.save(filestream, 'JPEG', quality=90)
         filestream.seek(0)
-        name = '{}.{}'.format(*imgs.name.split('.'))
-        print(imgs.name, name, resized_img_max.width, resized_img_max.height)
-        imgs = InMemoryUploadedFile(
+        name = '{}.{}'.format(*self.image.name.split('.'))
+        print(image.name, name, resized_img_max.width, resized_img_max.height)
+        self.image = InMemoryUploadedFile(
             filestream, 'ImageFiled', name, 'jpeg/image', sys.getsizeof(filestream) ,None
         )
-
-    def save(self, *args, **kwargs):
-        IMAGES = [
-            self.image,
-        ]
-
-        for img in IMAGES:
-            self.resizing(img)
 
         super().save(*args, *kwargs)
 
