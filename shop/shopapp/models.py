@@ -260,9 +260,6 @@ class Order(models.Model):
         (BUYING_TYPE_DELIVERY, 'Доставка')
     )
 
-    ff = models.CharField(max_length=255)
-    zz = models.CharField(max_length=222)
-
     customer = models.ForeignKey(Customer, verbose_name="Заказчик", related_name='related_orders', on_delete=models.CASCADE)
     fist_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")

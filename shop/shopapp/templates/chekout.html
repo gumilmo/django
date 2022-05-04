@@ -34,6 +34,9 @@
     footer{
       margin-top: 150px;
     }
+    .content-zone{
+      min-height: 700px;
+    }
 </style>
 {% if messages %}
     {% for message in messages %}
@@ -61,11 +64,11 @@
    {% for item in cart.products.all %}
     <tr>
       <th scope="row">{{item.content_object.title}}</th>
-      <td colspan="2" class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid" width="40px" height="40px"> </a></td>
-      <td></td>
+      <td class="w-25"><a href="{{ item.content_object.get_absolute_url }}"> <img src="{{item.content_object.image.url}}" alt="" class="img-fluid" width="40px" height="40px"> </a></td>
       <td>{{item.content_object.price}}</td>
       <td style="text-align: center">{{ item.qty }}</td>
       <td>{{item.total_price}} РУБ</td>
+      <td></td>
       <td></td>
     </tr>
   {% endfor %}

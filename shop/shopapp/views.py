@@ -34,9 +34,9 @@ def filter(request):
 
     if is_valid_queryparam(category_chk_query):
         products = products.filter(category__name__icontains=category_chk_query)
-    elif is_valid_queryparam(gender_chk_query):
+    if is_valid_queryparam(gender_chk_query):
         products = products.filter(gender__name__icontains=gender_chk_query)
-    elif is_valid_queryparam(season_chk_query):
+    if is_valid_queryparam(season_chk_query):
         products = products.filter(season__name__icontains=season_chk_query)
 
     if is_valid_queryparam(min_price_query):
@@ -86,10 +86,13 @@ class BaseView(CartMixin, View):
 def filter_view(request):
     return render(request, 'filter.html')
 
-class AboutView(View):
+class AboutView(CartMixin, View):
 
     def get(self, request):
-        return render(request, 'about.html')
+        context = {
+            'cart': self.cart
+        }
+        return render(request, 'about.html',context)
 
 class ProductDetailView(CartMixin, FormMixin, DetailView):
 
@@ -229,7 +232,7 @@ class ChangeSizeView(CartMixin, View):
         form = ProductForm(request.POST or None)
         if form.is_valid():
             product.size = form.cleaned_data['size']
-        print(product.size, product.title)
+        print(product.get_size_display(), product.title)
         messages.add_message(request, messages.INFO, "Размер выбран")
         return HttpResponseRedirect('/cart/')
 
@@ -237,13 +240,18 @@ class ChangeSizeView(CartMixin, View):
 class ChekoutView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        categories = list(Category.objects.all())
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        categories = Category.objects.all()
+        products = AnyShoes.objects.all()
+
+        size = self.cart.products.all()
 
         form = OrderForm(request.POST or None)
         context = {
             'cart': self.cart,
             'ct': categories,
             'form': form,
+            'ddd': size,
         }
 
         return render(request, 'chekout.html', context)

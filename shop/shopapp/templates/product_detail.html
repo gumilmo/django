@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+
 {% load crispy_forms_tags %}
 <style>
     header{
@@ -23,37 +24,70 @@
     .select{
         size: 200px;
     }
+     @media  screen and (max-width: 492px){
+         #carouselExampleIndicators{
+                 height: 240px!important;
+                width: 240px!important;
+         }
+     }
 </style>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'base' %}">Магазин</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{product.title}}</li>
+  </ol>
+</nav>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <div class="row">
-    <div class="col mb-4">
+        <div class="col mb-4">
+
+        <div id="carouselExampleIndicators"  style="height: 500px; width: 500px" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="{{ product.image.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
+            </div>
+            <div class="carousel-item">
+              <img src="{{ product.image2.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
+            </div>
+            <div class="carousel-item">
+              <img src="{{ product.image3.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
+            </div>
+          </div>
+          <a class="carousel-control-prev" style="color: black; font-weight: bold; font-size: 44px; text-decoration: none; transform: scaleY(1)" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <
+          </a>
+          <a class="carousel-control-next" style="color: black; font-weight: bold; font-size: 44px; text-decoration: none; transform: scaleY(1)" href="#carouselExampleIndicators" role="button" data-slide="next">
+            >
+          </a>
+</div>
+
+
         <div class="col mb-3">
-            <img src="{{ product.image.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
-            {% if product.image2 %}
-            <img src="{{ product.image2.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
-            {% endif %}
-            {% if product.image3 %}
-            <img src="{{ product.image3.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">
-            {% endif %}
+<!--            <img src="{{ product.image.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">-->
+<!--            <img src="{{ product.image2.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">-->
+<!--            <img src="{{ product.image3.url }}" alt="{{ product.title }}"  class="img-fluid" height="500" width="500">-->
         </div>
     </div>
     <div class="col mb-8">
         <h3>{{ product.title }}</h3>
-        <p>Цена: {{ product.price }} РУБ.</p>
-        <p>Описание: {{ product.description }}</p>
+        <p style="font-weight: bold; font-size: 24px" >Цена: {{ product.price }} РУБ.</p>
+        <p style="text-align: justify">Описание: {{ product.description }}</p>
         <div class="tags" style="max-width: 270px">
-             <a class="btn btn-outline-success">
+             <a href="{% url 'base' %}?gender_chk={{product.gender}}" class="btn btn-outline-success">
                 {{ product.gender }}
             </a>
-            <a class="btn btn-outline-primary" >
+            <a href="{% url 'base' %}?season_chk={{product.season}}" class="btn btn-outline-primary" >
                 {{ product.season }}
             </a>
-            <a class="btn btn-outline-secondary">
+            <a href="{% url 'base' %}?category_chk={{product.category}}" class="btn btn-outline-secondary">
                 {{ product.category }}
             </a>
+            <br>
             {% if product.action %}
-            <a class="btn btn-danger">
-                {{ product.action }}
-            </a>
+            <a tabindex="0" class="btn btn-lg btn-danger popover-dismiss" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="{{product.action.discription}}">{{product.action}}</a>
             {% endif %}
             <form action="" method="post">
 
@@ -64,5 +98,9 @@
         <a class="btn btn-success" style="border-radius: 0px" href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug%}">ДОБАВИТЬ В КОРЗИНУ</a>
     </div>
 </div>
-
+<script>
+$('.popover-dismiss').popover({
+  trigger: 'focus'
+})
+</script>
 {% endblock content %}
