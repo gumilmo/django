@@ -44,10 +44,10 @@
             <div class="col mb-5" style="display: none">
             </div>
                 {% for product in products %}
-                <div class="col mb-5" style="display: inline-table; margin: 7px; width: 280px; height: 100px">
+                <div class="col mb-5" style="display: inline-table; margin: 7px; width: 280px; height: 320px">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="{{product.image.url}}" height="200px" alt="..."/>
+                        <div class="img-product-detail-bg-div" style ="background: url({{ product.image.url }}) no-repeat center center; background-size: cover; height: 170px; width: 250px"></div>
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">

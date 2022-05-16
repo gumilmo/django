@@ -82,8 +82,8 @@ class Product(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название товара')
     slug = models.SlugField(unique=True)
     image = models.ImageField()
-    image2 = models.ImageField()
-    image3 = models.ImageField()
+    image2 = models.ImageField(null=True, blank=True)
+    image3 = models.ImageField(null=True, blank=True)
     description = models.TextField(verbose_name='Описание', null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Цена')
 
@@ -96,43 +96,46 @@ class Product(models.Model):
         image3 = self.image3
 
         img1 = Image.open(image1)
-        img2 = Image.open(image2)
-        img3 = Image.open(image3)
+        img2,img3 = 0,0
+        if image2:
+            img2 = Image.open(image2)
+            new_img2 = img2.convert('RGB')
+            filestream2 = BytesIO()
+            new_img2.save(filestream2, 'JPEG', quality=90)
+            filestream2.seek(0)
+            name2 = '{}.{}'.format(*self.image2.name.split('.'))
+            self.image2 = InMemoryUploadedFile(
+                filestream2, 'ImageFiled', name2, 'jpeg/image', sys.getsizeof(filestream2), None
+            )
+        if image3:
+            img3 = Image.open(image3)
+            new_img3 = img3.convert('RGB')
+            filestream3 = BytesIO()
+            new_img3.save(filestream3, 'JPEG', quality=90)
+            filestream3.seek(0)
+            name3 = '{}.{}'.format(*self.image3.name.split('.'))
+            self.image3 = InMemoryUploadedFile(
+                filestream3, 'ImageFiled', name3, 'jpeg/image', sys.getsizeof(filestream3), None
+            )
 
         new_img1 = img1.convert('RGB')
-        new_img2 = img2.convert('RGB')
-        new_img3 = img3.convert('RGB')
 
         min_height, min_width = self.VALID_RES
 
-        resized_img_max1 = new_img1.resize((800, 800), Image.ANTIALIAS)
-        resized_img_max2 = new_img2.resize((800, 800), Image.ANTIALIAS)
-        resized_img_max3 = new_img3.resize((800, 800), Image.ANTIALIAS)
+        #resized_img_max1 = new_img1.resize((800, 800), Image.ANTIALIAS)
+        #resized_img_max2 = new_img2.resize((800, 800), Image.ANTIALIAS)
+        #resized_img_max3 = new_img3.resize((800, 800), Image.ANTIALIAS)
 
         filestream1 = BytesIO()
-        filestream2 = BytesIO()
-        filestream3 = BytesIO()
 
-        resized_img_max1.save(filestream1, 'JPEG', quality=90)
-        resized_img_max2.save(filestream2, 'JPEG', quality=90)
-        resized_img_max3.save(filestream3, 'JPEG', quality=90)
+        new_img1.save(filestream1, 'JPEG', quality=90)
 
         filestream1.seek(0)
-        filestream2.seek(0)
-        filestream3.seek(0)
 
         name1 = '{}.{}'.format(*self.image.name.split('.'))
-        name2 = '{}.{}'.format(*self.image2.name.split('.'))
-        name3 = '{}.{}'.format(*self.image3.name.split('.'))
 
         self.image = InMemoryUploadedFile(
             filestream1, 'ImageFiled', name1, 'jpeg/image', sys.getsizeof(filestream1) ,None
-        )
-        self.image2 = InMemoryUploadedFile(
-            filestream2, 'ImageFiled', name2, 'jpeg/image', sys.getsizeof(filestream2) ,None
-        )
-        self.image3 = InMemoryUploadedFile(
-            filestream3, 'ImageFiled', name3, 'jpeg/image', sys.getsizeof(filestream3) ,None
         )
 
         super().save(*args, *kwargs)

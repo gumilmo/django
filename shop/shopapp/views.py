@@ -1,11 +1,9 @@
-from django.shortcuts import render
 from django.views.generic import DetailView, View
 from django.db.models import Avg, Max, Min
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from .models import AnyShoes, Category, Season, Gender, Customer, Cart, Size, CartProduct, Action
 from .mixins import *
-from rest_framework.views import APIView
 from django.db import transaction
 from .serializers import *
 from rest_framework.generics import ListCreateAPIView
@@ -13,11 +11,7 @@ from django.contrib import messages
 from .froms import OrderForm, ProductForm
 from .utils import *
 from django.views.generic.edit import FormMixin
-# from django_filters.rest_framework import DjangoFilterBackend
-# from django_filters import rest_framework as filters
 from django.core.paginator import Paginator
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
@@ -51,16 +45,13 @@ def filter(request):
 
 class BaseView(CartMixin, View):
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         categories = list(Category.objects.all())
-        #products = AnyShoes.objects.all()
         season = list(Season.objects.all())
         gender = list(Gender.objects.all())
         size = list(Size.objects.all())
         actions = list(Action.objects.all())
-        max_val = AnyShoes.objects.aggregate(Max('price'))
 
-        #qs = filter(request)
         products = filter(request)
 
         prodcuts_paginator = Paginator(products,6)
